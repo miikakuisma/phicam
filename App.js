@@ -5,36 +5,8 @@ import * as Haptics from 'expo-haptics'
 import Carousel from 'react-native-snap-carousel'
 import { captureRef as takeSnapshotAsync } from 'react-native-view-shot'
 import * as MediaLibrary from 'expo-media-library'
-
-const screenWidth = Dimensions.get('window').width
-const screenHeight = Dimensions.get('window').height
-
-const overlays = [
-  {
-    image: {
-      white: require('./assets/fibbonacci-vertical-white.png'),
-      black: require('./assets/fibbonacci-vertical-black.png')
-    }
-  },
-  {
-    image: {
-      white: require('./assets/spiral-horizontal-white.png'),
-      black: require('./assets/spiral-horizontal-black.png')
-    }
-  },
-  {
-    image: {
-      white: require('./assets/fol-white.png'),
-      black: require('./assets/fol-black.png')
-    }
-  },
-  {
-    image: {
-      white: require('./assets/folstar-white.png'),
-      black: require('./assets/folstar-black.png')
-    }
-  }
-]
+import { styles, screenWidth, screenHeight } from './styles/App'
+import { overlays } from './overlays'
 
 export default class App extends React.Component {
   state = {
@@ -46,7 +18,8 @@ export default class App extends React.Component {
     color: 'white',
     zoom: 1,
     lastOverlay: null,
-    libraryVisible: false
+    libraryVisible: false,
+    library: []
   }
 
   async componentDidMount() {
@@ -54,7 +27,8 @@ export default class App extends React.Component {
     this.setState({
       onboarded: await AsyncStorage.getItem('onboarded'),
       cameraPermission: status === 'granted',
-      lastOverlay: parseInt(await AsyncStorage.getItem('overlay')) || 0
+      lastOverlay: parseInt(await AsyncStorage.getItem('overlay')) || 0,
+      library: JSON.parse(await AsyncStorage.getItem('library')) || [],
     });
   }
 
@@ -73,7 +47,7 @@ export default class App extends React.Component {
       await AsyncStorage.setItem('overlay', index.toString())
     } catch (error) {
       // Error saving data
-    } 
+    }
   }
 
   async snap() {
@@ -99,12 +73,17 @@ export default class App extends React.Component {
     if (this.viewport) {
       let screenshot = await takeSnapshotAsync(this.viewport, {
         result: 'tmpfile',
-        height: screenWidth,
-        width: screenHeight,
         quality: 1,
         format: 'png',
       });
-      console.log(screenshot)
+      const library = this.state.library
+      library.push(screenshot)
+      this.setState({ library })
+      try {
+        await AsyncStorage.setItem('library', JSON.stringify(library))
+      } catch (error) {
+        // Error saving data
+      }
     }
   }
 
@@ -160,6 +139,17 @@ export default class App extends React.Component {
           </TouchableOpacity>
       </View>
     }
+
+    const photos = this.state.library.reverse().map((photo, index) => <Image
+      key={index}
+      style={{
+        width: screenWidth / 4,
+        height: screenHeight / 4,
+        margin: 10
+      }}
+      resizeMethod="auto"
+      source={{ uri: photo }}
+    />)
 
     return (
       <View style={styles.container}>
@@ -232,7 +222,7 @@ export default class App extends React.Component {
               Alert.alert('Modal has been closed.');
             }}>
             <ScrollView style={styles.modalContainer}>
-              
+              {photos}
             </ScrollView>
             <View style={styles.modalBottomButton}>
               <Button title='Close' onPress={this.onToggleLibrary.bind(this)} />
@@ -243,92 +233,3 @@ export default class App extends React.Component {
     );
   }
 }
-
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  onboarding: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 1
-  },
-  onboardingImg: {
-    flex: 1,
-  },
-  viewport: {
-    flex: 1,
-    backgroundColor: 'transparent'
-  },
-  overlay: {
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    right: 0,
-    bottom: 0,
-  },
-  swiper: {
-
-  },
-  overlayImage: {
-    alignSelf: "center",
-    maxWidth: screenWidth - 40,
-    maxHeight: screenHeight - 180,
-    overflow: "hidden"
-  },
-  smallButtons: {
-    position: 'absolute',
-    left: 40,
-    right: 40,
-    bottom: 180,
-    flexDirection: 'row',
-    justifyContent: 'space-evenly'
-  },
-  buttonSmall: {
-    width: 48,
-    height: 48,
-    backgroundColor: 'white',
-    borderRadius: 16
-  },
-  mainButtons: {
-    position: 'absolute',
-    left: 40,
-    right: 40,
-    bottom: 70,
-    flexDirection: 'row',
-    justifyContent: 'space-evenly'
-  },
-  buttonBig: {
-    width: 64,
-    height: 64,
-    backgroundColor: 'white',
-    borderRadius: 16
-  },
-  buttonShoot: {
-    width: 84,
-    height: 84,
-    backgroundColor: 'black',
-    borderRadius: 24,
-    marginTop: -10
-  },
-  modalContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: screenHeight,
-    padding: 30,
-    backgroundColor: '#ffffff'
-  },
-  modalBottomButton: {
-    position: 'absolute',
-    bottom: 50,
-    left: 30,
-    right: 30,
-    zIndex: 3
-  }
-});
