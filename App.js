@@ -1,5 +1,5 @@
 import React from 'react'
-import { Dimensions, StyleSheet, Text, View, ImageBackground, Image, TouchableOpacity, AsyncStorage, Slider } from 'react-native'
+import { Dimensions, StyleSheet, Text, View, ImageBackground, Image, TouchableOpacity, AsyncStorage, Slider, Modal, ScrollView, Button } from 'react-native'
 import { Camera } from 'expo-camera'
 import * as Haptics from 'expo-haptics'
 import Carousel from 'react-native-snap-carousel'
@@ -46,6 +46,7 @@ export default class App extends React.Component {
     color: 'white',
     zoom: 1,
     lastOverlay: null,
+    libraryVisible: false
   }
 
   async componentDidMount() {
@@ -133,6 +134,10 @@ export default class App extends React.Component {
     />
   }
 
+  onToggleLibrary() {
+    this.setState({ libraryVisible: !this.state.libraryVisible })
+  }
+
   render() {
     const { cameraPermission, type } = this.state;
 
@@ -213,11 +218,27 @@ export default class App extends React.Component {
               <Image style={styles.buttonShoot} source={require('./assets/shoot.png')} resizeMode="contain" />
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={this.onInvert.bind(this)}>
+            <TouchableOpacity onPress={this.onToggleLibrary.bind(this)}>
               <Image style={styles.buttonBig} source={require('./assets/grid.png')} resizeMode="contain" />
             </TouchableOpacity>
           </View>
         </View>
+        { this.state.libraryVisible && <View style={{marginTop: 100}}>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            // visible={this.state.libraryVisible}
+            onRequestClose={() => {
+              Alert.alert('Modal has been closed.');
+            }}>
+            <ScrollView style={styles.modalContainer}>
+              
+            </ScrollView>
+            <View style={styles.modalBottomButton}>
+              <Button title='Close' onPress={this.onToggleLibrary.bind(this)} />
+            </View>
+          </Modal>
+        </View> }
       </View>
     );
   }
@@ -293,5 +314,21 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
     borderRadius: 24,
     marginTop: -10
+  },
+  modalContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: screenHeight,
+    padding: 30,
+    backgroundColor: '#ffffff'
+  },
+  modalBottomButton: {
+    position: 'absolute',
+    bottom: 50,
+    left: 30,
+    right: 30,
+    zIndex: 3
   }
 });
