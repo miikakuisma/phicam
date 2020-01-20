@@ -1,5 +1,5 @@
 import React from 'react'
-import { Dimensions, StyleSheet, Text, View, Image, TouchableOpacity, AsyncStorage, Slider } from 'react-native'
+import { Dimensions, StyleSheet, Text, View, ImageBackground, Image, TouchableOpacity, AsyncStorage, Slider } from 'react-native'
 import { Camera } from 'expo-camera'
 import * as Haptics from 'expo-haptics'
 import Carousel from 'react-native-snap-carousel'
@@ -38,6 +38,7 @@ const overlays = [
 
 export default class App extends React.Component {
   state = {
+    onboarded: null,
     cameraPermission: null,
     cameraRollPermission: null,
     type: Camera.Constants.Type.back,
@@ -50,9 +51,19 @@ export default class App extends React.Component {
   async componentDidMount() {
     const { status } = await Camera.requestPermissionsAsync();
     this.setState({
+      onboarded: await AsyncStorage.getItem('onboarded'),
       cameraPermission: status === 'granted',
       lastOverlay: parseInt(await AsyncStorage.getItem('overlay')) || 0
     });
+  }
+
+  async onboardingDone () {
+    this.setState({ onboarded: 'done' })
+    try {
+      await AsyncStorage.setItem('onboarded', 'done')
+    } catch (error) {
+      // Error saving data
+    }
   }
 
   async onOverlayChange (index) {
@@ -133,6 +144,18 @@ export default class App extends React.Component {
       return <Text>No access to camera</Text>;
     }
 
+    if (this.state.onboarded !== 'done') {
+      return <View style={styles.container}>
+        <TouchableOpacity
+            activeOpacity={0.9}
+            style={styles.onboarding}
+            onPress={this.onboardingDone.bind(this)}
+          >
+            <ImageBackground source={require('./assets/onboarding.png')} style={styles.onboardingImg} />
+          </TouchableOpacity>
+      </View>
+    }
+
     return (
       <View style={styles.container}>
         <View
@@ -203,6 +226,17 @@ export default class App extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  onboarding: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 1
+  },
+  onboardingImg: {
     flex: 1,
   },
   viewport: {
