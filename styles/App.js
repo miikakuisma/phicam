@@ -71,6 +71,15 @@ export const styles = StyleSheet.create({
     borderRadius: 24,
     marginTop: -10
   },
+  previewContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    width: screenWidth,
+    height: screenHeight,
+    backgroundColor: '#000000',
+  },
   modalContainer: {
     position: 'absolute',
     top: 0,

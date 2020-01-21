@@ -17,6 +17,7 @@ export default class App extends React.Component {
     overlay: 0,
     color: 'white',
     zoom: 1,
+    grabbed: false,
     lastOverlay: null,
     libraryVisible: false,
     library: []
@@ -50,13 +51,6 @@ export default class App extends React.Component {
     }
   }
 
-  async snap() {
-    if (this.camera) {
-      let photo = await this.camera.takePictureAsync();
-      console.log(photo)
-    }
-  }
-
   onFlip() {
     if (this.state.type === Camera.Constants.Type.back) {
       this.setState({
@@ -70,20 +64,17 @@ export default class App extends React.Component {
   }
 
   async onGrab() {
-    if (this.viewport) {
-      let screenshot = await takeSnapshotAsync(this.viewport, {
-        result: 'tmpfile',
-        quality: 1,
-        format: 'png',
-      });
-      const library = this.state.library
-      library.push(screenshot)
-      this.setState({ library })
-      try {
-        await AsyncStorage.setItem('library', JSON.stringify(library))
-      } catch (error) {
-        // Error saving data
-      }
+    if (this.camera) {
+      let photo = await this.camera.takePictureAsync();
+      console.log(photo)
+      this.setState({
+        grabbed: {
+          uri: photo.uri,
+          width: photo.width,
+          height: photo.height
+        }
+      })
+      
     }
   }
 
@@ -117,6 +108,31 @@ export default class App extends React.Component {
     this.setState({ libraryVisible: !this.state.libraryVisible })
   }
 
+  onDiscard() {
+    this.setState({ grabbed: null })
+  }
+
+  async onSave() {
+    if (this.preview) {
+      let screenshot = await takeSnapshotAsync(this.preview, {
+        result: 'tmpfile',
+        quality: 1,
+        format: 'png',
+      });
+      const library = this.state.library
+      library.push(screenshot)
+      this.setState({
+        library,
+        grabbed: null
+      })
+      try {
+        await AsyncStorage.setItem('library', JSON.stringify(library))
+      } catch (error) {
+        // Error saving data
+      }
+    }
+  }
+
   render() {
     const { cameraPermission, type } = this.state;
 
@@ -131,12 +147,12 @@ export default class App extends React.Component {
     if (this.state.onboarded !== 'done') {
       return <View style={styles.container}>
         <TouchableOpacity
-            activeOpacity={0.9}
-            style={styles.onboarding}
-            onPress={this.onboardingDone.bind(this)}
-          >
-            <ImageBackground source={require('./assets/onboarding.png')} style={styles.onboardingImg} />
-          </TouchableOpacity>
+          activeOpacity={0.9}
+          style={styles.onboarding}
+          onPress={this.onboardingDone.bind(this)}
+        >
+          <ImageBackground source={require('./assets/onboarding.png')} style={styles.onboardingImg} />
+        </TouchableOpacity>
       </View>
     }
 
@@ -154,14 +170,23 @@ export default class App extends React.Component {
     return (
       <View style={styles.container}>
         <View
-          ref={ref => { this.viewport = ref; }}
+          ref={ref => { this.preview = ref; }}
           style={styles.viewport}
         >
-          <Camera
+          { !this.state.grabbed && <Camera
             ref={ref => { this.camera = ref; }}
             style={{ flex: 1 }}
             type={type}
-          />
+          /> }
+          { this.state.grabbed && <View style={{ flex: 1 }}>
+          <View
+            style={{ flex: 1 }}
+          >
+          <View style={styles.previewContainer}>
+            <Image source={this.state.grabbed} resizeMode='cover' style={styles.previewContainer} />
+          </View>
+        </View>
+        </View> }
           <View style={styles.overlay}>
             <Carousel
               ref={c => this._carousel = c}
@@ -181,7 +206,7 @@ export default class App extends React.Component {
             />
           </View>
 
-          <View style={styles.smallButtons}>
+          { !this.state.grabbed && <View style={styles.smallButtons}>
             <Slider
               style={{
                 width: 150, height: 40, marginLeft: 10, marginRight: 10
@@ -197,9 +222,9 @@ export default class App extends React.Component {
             <TouchableOpacity onPress={this.onInvert.bind(this)}>
               <Image style={styles.buttonSmall} source={require('./assets/invert.png')} resizeMode="contain" />
             </TouchableOpacity>
-          </View>
+          </View> }
 
-          <View style={styles.mainButtons}>
+          { !this.state.grabbed && <View style={styles.mainButtons}>
             <TouchableOpacity onPress={this.onFlip.bind(this)}>
               <Image style={styles.buttonBig} source={require('./assets/flip.png')} resizeMode="contain" />
             </TouchableOpacity>
@@ -211,8 +236,13 @@ export default class App extends React.Component {
             <TouchableOpacity onPress={this.onToggleLibrary.bind(this)}>
               <Image style={styles.buttonBig} source={require('./assets/grid.png')} resizeMode="contain" />
             </TouchableOpacity>
-          </View>
+          </View> }
+          { this.state.grabbed && <View style={styles.modalBottomButton}>
+            <Button title='Discard' onPress={this.onDiscard.bind(this)} />
+            <Button title='Save' onPress={this.onSave.bind(this)} />
+          </View> }
         </View>
+
         { this.state.libraryVisible && <View style={{marginTop: 100}}>
           <Modal
             animationType="slide"
