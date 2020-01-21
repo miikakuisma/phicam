@@ -22,5 +22,23 @@ export const overlays = [
       white: require('./assets/folstar-white.png'),
       black: require('./assets/folstar-black.png')
     }
+  },
+  {
+    image: {
+      white: require('./assets/6-white.png'),
+      black: require('./assets/6-black.png')
+    }
+  },
+  {
+    image: {
+      white: require('./assets/12-white.png'),
+      black: require('./assets/12-black.png')
+    }
+  },
+  {
+    image: {
+      white: require('./assets/24-white.png'),
+      black: require('./assets/24-black.png')
+    }
   }
 ]

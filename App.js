@@ -2,9 +2,9 @@ import React from 'react'
 import { Dimensions, StyleSheet, Text, View, ImageBackground, Image, TouchableOpacity, AsyncStorage, Slider, Modal, ScrollView, Button } from 'react-native'
 import { Camera } from 'expo-camera'
 import * as Haptics from 'expo-haptics'
+import * as MediaLibrary from 'expo-media-library'
 import Carousel from 'react-native-snap-carousel'
 import { captureRef as takeSnapshotAsync } from 'react-native-view-shot'
-import * as MediaLibrary from 'expo-media-library'
 import { styles, screenWidth, screenHeight } from './styles/App'
 import { overlays } from './overlays'
 
@@ -19,8 +19,7 @@ export default class App extends React.Component {
     zoom: 1,
     grabbed: false,
     lastOverlay: null,
-    libraryVisible: false,
-    library: []
+    controlsVisible: false,
   }
 
   async componentDidMount() {
@@ -29,7 +28,6 @@ export default class App extends React.Component {
       onboarded: await AsyncStorage.getItem('onboarded'),
       cameraPermission: status === 'granted',
       lastOverlay: parseInt(await AsyncStorage.getItem('overlay')) || 0,
-      library: JSON.parse(await AsyncStorage.getItem('library')) || [],
     });
   }
 
@@ -104,8 +102,8 @@ export default class App extends React.Component {
     />
   }
 
-  onToggleLibrary() {
-    this.setState({ libraryVisible: !this.state.libraryVisible })
+  onToggleControls() {
+    this.setState({ controlsVisible: !this.state.controlsVisible })
   }
 
   onDiscard() {
@@ -119,14 +117,11 @@ export default class App extends React.Component {
         quality: 1,
         format: 'png',
       });
-      const library = this.state.library
-      library.push(screenshot)
       this.setState({
-        library,
         grabbed: null
       })
       try {
-        await AsyncStorage.setItem('library', JSON.stringify(library))
+        await MediaLibrary.saveToLibraryAsync(screenshot)
       } catch (error) {
         // Error saving data
       }
@@ -156,23 +151,16 @@ export default class App extends React.Component {
       </View>
     }
 
-    const photos = this.state.library.reverse().map((photo, index) => <Image
-      key={index}
-      style={{
-        width: screenWidth / 4,
-        height: screenHeight / 4,
-        margin: 10
-      }}
-      resizeMethod="auto"
-      source={{ uri: photo }}
-    />)
-
     return (
       <View style={styles.container}>
         { this.state.grabbed && <View style={styles.modalBottomButton}>
-            <Button title='Discard' onPress={this.onDiscard.bind(this)} />
-            <Button title='Save' onPress={this.onSave.bind(this)} />
-          </View> }
+          <TouchableOpacity onPress={this.onDiscard.bind(this)}>
+            <Image style={styles.buttonHuge} source={require('./assets/delete.png')} resizeMode="contain" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={this.onSave.bind(this)}>
+            <Image style={styles.buttonHuge} source={require('./assets/download.png')} resizeMode="contain" />
+          </TouchableOpacity>
+        </View> }
         <View
           ref={ref => { this.preview = ref; }}
           style={styles.viewport}
@@ -210,7 +198,7 @@ export default class App extends React.Component {
             />
           </View>
 
-          { !this.state.grabbed && <View style={styles.smallButtons}>
+          { !this.state.grabbed && this.state.controlsVisible && <View style={styles.smallButtons}>
             <Slider
               style={{
                 width: 150, height: 40, marginLeft: 10, marginRight: 10
@@ -237,8 +225,8 @@ export default class App extends React.Component {
               <Image style={styles.buttonShoot} source={require('./assets/shoot.png')} resizeMode="contain" />
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={this.onToggleLibrary.bind(this)}>
-              <Image style={styles.buttonBig} source={require('./assets/grid.png')} resizeMode="contain" />
+            <TouchableOpacity onPress={this.onToggleControls.bind(this)}>
+              <Image style={styles.buttonBig} source={require('./assets/controls.png')} resizeMode="contain" />
             </TouchableOpacity>
           </View> }
         </View>

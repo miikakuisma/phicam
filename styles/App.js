@@ -34,7 +34,7 @@ export const styles = StyleSheet.create({
   overlayImage: {
     alignSelf: "center",
     maxWidth: screenWidth - 40,
-    maxHeight: screenHeight - 180,
+    maxHeight: screenHeight - 40,
   },
   smallButtons: {
     position: 'absolute',
@@ -71,6 +71,12 @@ export const styles = StyleSheet.create({
     borderRadius: 24,
     marginTop: -10
   },
+  buttonHuge: {
+    width: 84,
+    height: 84,
+    backgroundColor: 'white',
+    borderRadius: 24
+  },
   previewContainer: {
     position: 'absolute',
     top: 0,
@@ -91,11 +97,11 @@ export const styles = StyleSheet.create({
   },
   modalBottomButton: {
     position: 'absolute',
-    bottom: 50,
+    bottom: 70,
     left: 30,
     right: 30,
     zIndex: 3,
     flexDirection: 'row',
-    justifyContent: 'center'
+    justifyContent: 'space-around'
   }
 });
