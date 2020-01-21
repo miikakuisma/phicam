@@ -169,6 +169,10 @@ export default class App extends React.Component {
 
     return (
       <View style={styles.container}>
+        { this.state.grabbed && <View style={styles.modalBottomButton}>
+            <Button title='Discard' onPress={this.onDiscard.bind(this)} />
+            <Button title='Save' onPress={this.onSave.bind(this)} />
+          </View> }
         <View
           ref={ref => { this.preview = ref; }}
           style={styles.viewport}
@@ -237,10 +241,6 @@ export default class App extends React.Component {
               <Image style={styles.buttonBig} source={require('./assets/grid.png')} resizeMode="contain" />
             </TouchableOpacity>
           </View> }
-          { this.state.grabbed && <View style={styles.modalBottomButton}>
-            <Button title='Discard' onPress={this.onDiscard.bind(this)} />
-            <Button title='Save' onPress={this.onSave.bind(this)} />
-          </View> }
         </View>
 
         { this.state.libraryVisible && <View style={{marginTop: 100}}>
@@ -256,6 +256,10 @@ export default class App extends React.Component {
             </ScrollView>
             <View style={styles.modalBottomButton}>
               <Button title='Close' onPress={this.onToggleLibrary.bind(this)} />
+              <Button title='Clear' onPress={() => {
+                AsyncStorage.removeItem('library');
+                this.setState({ library: [] })
+              }} />
             </View>
           </Modal>
         </View> }

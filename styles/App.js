@@ -94,6 +94,8 @@ export const styles = StyleSheet.create({
     bottom: 50,
     left: 30,
     right: 30,
-    zIndex: 3
+    zIndex: 3,
+    flexDirection: 'row',
+    justifyContent: 'center'
   }
 });
