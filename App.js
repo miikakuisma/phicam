@@ -1,15 +1,18 @@
 import React from 'react'
-import { Dimensions, StyleSheet, Text, View, ImageBackground, Image, TouchableOpacity, AsyncStorage, Slider, Modal, ScrollView, Button } from 'react-native'
+import { Text, View, ImageBackground, Image, TouchableOpacity, AsyncStorage, Slider, Modal, ScrollView, Button } from 'react-native'
+import { AppLoading } from 'expo'
+import { Asset } from 'expo-asset'
 import { Camera } from 'expo-camera'
 import * as Haptics from 'expo-haptics'
 import * as MediaLibrary from 'expo-media-library'
 import Carousel from 'react-native-snap-carousel'
 import { captureRef as takeSnapshotAsync } from 'react-native-view-shot'
 import { styles, screenWidth, screenHeight } from './styles/App'
-import { overlays } from './overlays'
+import { assetList, overlays } from './overlays'
 
 export default class App extends React.Component {
   state = {
+    isReady: false,
     onboarded: null,
     cameraPermission: null,
     cameraRollPermission: null,
@@ -20,6 +23,14 @@ export default class App extends React.Component {
     grabbed: false,
     lastOverlay: null,
     controlsVisible: false,
+  }
+
+  async _cacheResourcesAsync() {
+    const images = assetList
+    const cacheImages = images.map(image => {
+      return Asset.fromModule(image).downloadAsync()
+    }); 
+    return Promise.all(cacheImages)
   }
 
   async componentDidMount() {
@@ -64,7 +75,6 @@ export default class App extends React.Component {
   async onGrab() {
     if (this.camera) {
       let photo = await this.camera.takePictureAsync();
-      console.log(photo)
       this.setState({
         grabbed: {
           uri: photo.uri,
@@ -72,7 +82,6 @@ export default class App extends React.Component {
           height: photo.height
         }
       })
-      
     }
   }
 
@@ -129,7 +138,17 @@ export default class App extends React.Component {
   }
 
   render() {
-    const { cameraPermission, type } = this.state;
+    const { isReady, cameraPermission, type } = this.state;
+
+    if (!isReady) {
+      return (
+        <AppLoading
+          startAsync={this._cacheResourcesAsync}
+          onFinish={() => this.setState({ isReady: true })}
+          onError={console.warn}
+        />
+      ); 
+    }
 
     if (cameraPermission === null) {
       return <View />;

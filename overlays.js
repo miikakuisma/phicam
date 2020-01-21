@@ -1,3 +1,27 @@
+export const assetList = [
+  require('./assets/fibbonacci-vertical-white.png'),
+  require('./assets/fibbonacci-vertical-black.png'),
+  require('./assets/spiral-horizontal-white.png'),
+  require('./assets/spiral-horizontal-black.png'),
+  require('./assets/fol-white.png'),
+  require('./assets/fol-black.png'),
+  require('./assets/folstar-white.png'),
+  require('./assets/folstar-black.png'),
+  require('./assets/6-white.png'),
+  require('./assets/6-black.png'),
+  require('./assets/12-white.png'),
+  require('./assets/12-black.png'),
+  require('./assets/24-white.png'),
+  require('./assets/24-black.png'),
+  require('./assets/onboarding.png'),
+  require('./assets/delete.png'),
+  require('./assets/download.png'),
+  require('./assets/invert.png'),
+  require('./assets/flip.png'),
+  require('./assets/shoot.png'),
+  require('./assets/controls.png'),
+]
+
 export const overlays = [
   {
     image: {
