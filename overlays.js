@@ -20,6 +20,7 @@ export const assetList = [
   require('./assets/flip.png'),
   require('./assets/shoot.png'),
   require('./assets/controls.png'),
+  require('./assets/check.png'),
 ]
 
 export const overlays = [

@@ -131,6 +131,10 @@ export default class App extends React.Component {
       })
       try {
         await MediaLibrary.saveToLibraryAsync(screenshot)
+        this.setState({ savedSuccess: true })
+        setTimeout(() => {
+          this.setState({ savedSuccess: false })
+        }, 1618)
       } catch (error) {
         // Error saving data
       }
@@ -250,26 +254,15 @@ export default class App extends React.Component {
           </View> }
         </View>
 
-        { this.state.libraryVisible && <View style={{marginTop: 100}}>
-          <Modal
-            animationType="slide"
-            transparent={true}
-            // visible={this.state.libraryVisible}
-            onRequestClose={() => {
-              Alert.alert('Modal has been closed.');
-            }}>
-            <ScrollView style={styles.modalContainer}>
-              {photos}
-            </ScrollView>
-            <View style={styles.modalBottomButton}>
-              <Button title='Close' onPress={this.onToggleLibrary.bind(this)} />
-              <Button title='Clear' onPress={() => {
-                AsyncStorage.removeItem('library');
-                this.setState({ library: [] })
-              }} />
-            </View>
-          </Modal>
-        </View> }
+        {this.state.savedSuccess && <Modal
+          animationType="fade"
+          transparent={true}
+        >
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalText}>Saved to Your Photos!</Text>
+            <Image source={require('./assets/check.png')} style={styles.modalImage} />
+          </View>
+        </Modal>}
       </View>
     );
   }

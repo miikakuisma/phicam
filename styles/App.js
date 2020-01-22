@@ -91,9 +91,24 @@ export const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    height: screenHeight,
-    padding: 30,
-    backgroundColor: '#ffffff',
+    bottom: 0,
+    zIndex: 9,
+    // width: screenWidth,
+    // height: screenHeight,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    alignContent: 'center',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  modalText: {
+    fontSize: 24,
+    width: screenWidth / 3,
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  modalImage: {
+    width: 128,
+    height: 128
   },
   modalBottomButton: {
     position: 'absolute',
