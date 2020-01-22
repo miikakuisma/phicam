@@ -1,69 +1,69 @@
 export const assetList = [
-  require('./assets/fibbonacci-vertical-white.png'),
-  require('./assets/fibbonacci-vertical-black.png'),
-  require('./assets/spiral-horizontal-white.png'),
-  require('./assets/spiral-horizontal-black.png'),
-  require('./assets/fol-white.png'),
-  require('./assets/fol-black.png'),
-  require('./assets/folstar-white.png'),
-  require('./assets/folstar-black.png'),
-  require('./assets/6-white.png'),
-  require('./assets/6-black.png'),
-  require('./assets/12-white.png'),
-  require('./assets/12-black.png'),
-  require('./assets/24-white.png'),
-  require('./assets/24-black.png'),
+  require('./assets/overlays/fibbonacci-vertical-white.png'),
+  require('./assets/overlays/fibbonacci-vertical-black.png'),
+  require('./assets/overlays/spiral-horizontal-white.png'),
+  require('./assets/overlays/spiral-horizontal-black.png'),
+  require('./assets/overlays/fol-white.png'),
+  require('./assets/overlays/fol-black.png'),
+  require('./assets/overlays/folstar-white.png'),
+  require('./assets/overlays/folstar-black.png'),
+  require('./assets/overlays/6-white.png'),
+  require('./assets/overlays/6-black.png'),
+  require('./assets/overlays/12-white.png'),
+  require('./assets/overlays/12-black.png'),
+  require('./assets/overlays/24-white.png'),
+  require('./assets/overlays/24-black.png'),
   require('./assets/onboarding.png'),
-  require('./assets/delete.png'),
-  require('./assets/download.png'),
-  require('./assets/invert.png'),
-  require('./assets/flip.png'),
-  require('./assets/shoot.png'),
-  require('./assets/controls.png'),
-  require('./assets/check.png'),
+  require('./assets/icons/delete.png'),
+  require('./assets/icons/download.png'),
+  require('./assets/icons/invert.png'),
+  require('./assets/icons/flip.png'),
+  require('./assets/icons/shoot.png'),
+  require('./assets/icons/controls.png'),
+  require('./assets/icons/check.png'),
 ]
 
 export const overlays = [
   {
     image: {
-      white: require('./assets/fibbonacci-vertical-white.png'),
-      black: require('./assets/fibbonacci-vertical-black.png')
+      white: require('./assets/overlays/fibbonacci-vertical-white.png'),
+      black: require('./assets/overlays/fibbonacci-vertical-black.png')
     }
   },
   {
     image: {
-      white: require('./assets/spiral-horizontal-white.png'),
-      black: require('./assets/spiral-horizontal-black.png')
+      white: require('./assets/overlays/spiral-horizontal-white.png'),
+      black: require('./assets/overlays/spiral-horizontal-black.png')
     }
   },
   {
     image: {
-      white: require('./assets/fol-white.png'),
-      black: require('./assets/fol-black.png')
+      white: require('./assets/overlays/fol-white.png'),
+      black: require('./assets/overlays/fol-black.png')
     }
   },
   {
     image: {
-      white: require('./assets/folstar-white.png'),
-      black: require('./assets/folstar-black.png')
+      white: require('./assets/overlays/folstar-white.png'),
+      black: require('./assets/overlays/folstar-black.png')
     }
   },
   {
     image: {
-      white: require('./assets/6-white.png'),
-      black: require('./assets/6-black.png')
+      white: require('./assets/overlays/6-white.png'),
+      black: require('./assets/overlays/6-black.png')
     }
   },
   {
     image: {
-      white: require('./assets/12-white.png'),
-      black: require('./assets/12-black.png')
+      white: require('./assets/overlays/12-white.png'),
+      black: require('./assets/overlays/12-black.png')
     }
   },
   {
     image: {
-      white: require('./assets/24-white.png'),
-      black: require('./assets/24-black.png')
+      white: require('./assets/overlays/24-white.png'),
+      black: require('./assets/overlays/24-black.png')
     }
   }
 ]

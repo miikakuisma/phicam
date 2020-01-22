@@ -93,8 +93,6 @@ export const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     zIndex: 9,
-    // width: screenWidth,
-    // height: screenHeight,
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
     alignContent: 'center',
     justifyContent: 'center',

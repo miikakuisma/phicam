@@ -142,7 +142,7 @@ export default class App extends React.Component {
   }
 
   render() {
-    const { isReady, cameraPermission, type } = this.state;
+    const { isReady, cameraPermission, type, grabbed, lastOverlay, savedSuccess, controlsVisible, zoom } = this.state;
 
     if (!isReady) {
       return (
@@ -176,29 +176,29 @@ export default class App extends React.Component {
 
     return (
       <View style={styles.container}>
-        { this.state.grabbed && <View style={styles.modalBottomButton}>
+        { grabbed && <View style={styles.modalBottomButton}>
           <TouchableOpacity onPress={this.onDiscard.bind(this)}>
-            <Image style={styles.buttonHuge} source={require('./assets/delete.png')} resizeMode="contain" />
+            <Image style={styles.buttonHuge} source={require('./assets/icons/delete.png')} resizeMode="contain" />
           </TouchableOpacity>
           <TouchableOpacity onPress={this.onSave.bind(this)}>
-            <Image style={styles.buttonHuge} source={require('./assets/download.png')} resizeMode="contain" />
+            <Image style={styles.buttonHuge} source={require('./assets/icons/download.png')} resizeMode="contain" />
           </TouchableOpacity>
         </View> }
         <View
           ref={ref => { this.preview = ref; }}
           style={styles.viewport}
         >
-          { !this.state.grabbed && <Camera
+          { !grabbed && <Camera
             ref={ref => { this.camera = ref; }}
             style={{ flex: 1 }}
             type={type}
           /> }
-          { this.state.grabbed && <View style={{ flex: 1 }}>
+          { grabbed && <View style={{ flex: 1 }}>
           <View
             style={{ flex: 1 }}
           >
           <View style={styles.previewContainer}>
-            <Image source={this.state.grabbed} resizeMode='cover' style={styles.previewContainer} />
+            <Image source={grabbed} resizeMode='cover' style={styles.previewContainer} />
           </View>
         </View>
         </View> }
@@ -217,17 +217,17 @@ export default class App extends React.Component {
               loop={true}
               autoplay={false}
               onSnapToItem={(index) => this.onOverlayChange(index)}
-              firstItem={this.state.lastOverlay}
+              firstItem={lastOverlay}
             />
           </View>
 
-          { !this.state.grabbed && this.state.controlsVisible && <View style={styles.smallButtons}>
+          { !grabbed && controlsVisible && <View style={styles.smallButtons}>
             <Slider
               style={{
                 width: 150, height: 40, marginLeft: 10, marginRight: 10
               }}
               step={0.05}
-              value={this.state.zoom}
+              value={zoom}
               minimumValue={0.5}
               maximumValue={1.5}
               minimumTrackTintColor="#FFFFFF"
@@ -235,32 +235,32 @@ export default class App extends React.Component {
               onValueChange={this.onZoom.bind(this)}
             />
             <TouchableOpacity onPress={this.onInvert.bind(this)}>
-              <Image style={styles.buttonSmall} source={require('./assets/invert.png')} resizeMode="contain" />
+              <Image style={styles.buttonSmall} source={require('./assets/icons/invert.png')} resizeMode="contain" />
             </TouchableOpacity>
           </View> }
 
-          { !this.state.grabbed && <View style={styles.mainButtons}>
+          { !grabbed && <View style={styles.mainButtons}>
             <TouchableOpacity onPress={this.onFlip.bind(this)}>
-              <Image style={styles.buttonBig} source={require('./assets/flip.png')} resizeMode="contain" />
+              <Image style={styles.buttonBig} source={require('./assets/icons/flip.png')} resizeMode="contain" />
             </TouchableOpacity>
 
             <TouchableOpacity onPress={this.onGrab.bind(this)}>
-              <Image style={styles.buttonShoot} source={require('./assets/shoot.png')} resizeMode="contain" />
+              <Image style={styles.buttonShoot} source={require('./assets/icons/shoot.png')} resizeMode="contain" />
             </TouchableOpacity>
 
             <TouchableOpacity onPress={this.onToggleControls.bind(this)}>
-              <Image style={styles.buttonBig} source={require('./assets/controls.png')} resizeMode="contain" />
+              <Image style={styles.buttonBig} source={require('./assets/icons/controls.png')} resizeMode="contain" />
             </TouchableOpacity>
           </View> }
         </View>
 
-        {this.state.savedSuccess && <Modal
+        {savedSuccess && <Modal
           animationType="fade"
           transparent={true}
         >
           <View style={styles.modalContainer}>
             <Text style={styles.modalText}>Saved to Your Photos!</Text>
-            <Image source={require('./assets/check.png')} style={styles.modalImage} />
+            <Image source={require('./assets/icons/check.png')} style={styles.modalImage} />
           </View>
         </Modal>}
       </View>
