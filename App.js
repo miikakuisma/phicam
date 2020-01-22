@@ -17,6 +17,7 @@ export default class App extends React.Component {
     onboarded: null,
     cameraPermission: null,
     cameraRollPermission: null,
+    bootDelay: false,
     type: Camera.Constants.Type.back,
     grabbed: false,
     controlsVisible: false,
@@ -40,6 +41,9 @@ export default class App extends React.Component {
       cameraPermission: status === 'granted',
       savedIndex: parseInt(await AsyncStorage.getItem('savedIndex')) || 0
     })
+    setTimeout(() => {
+      this.setState({ bootDelay: true })
+    }, 1000)
   }
 
   async onboardingDone () {
@@ -130,6 +134,7 @@ export default class App extends React.Component {
     const {
       isReady,
       cameraPermission,
+      bootDelay,
       type,
       grabbed,
       savedSuccess,
@@ -149,7 +154,7 @@ export default class App extends React.Component {
       )
     }
 
-    if (!cameraPermission && isReady) {
+    if (!cameraPermission && isReady && bootDelay) {
       return <Modal
       animationType="fade"
       transparent={true}
@@ -158,10 +163,9 @@ export default class App extends React.Component {
         <Text style={styles.modalText}>No access to camera</Text>
         <Image source={require('./assets/icons/settings.png')} style={styles.modalImage} />
       </View>
-    </Modal>
-    }
+    </Modal>}
 
-    if (this.state.onboarded !== 'done') {
+    if (this.state.onboarded !== 'done' && bootDelay) {
       return <View style={styles.container}>
         <TouchableOpacity
           activeOpacity={0.9}
@@ -231,6 +235,6 @@ export default class App extends React.Component {
         </Modal>}
 
       </View>
-    );
+    )
   }
 }
