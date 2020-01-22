@@ -151,7 +151,15 @@ export default class App extends React.Component {
     }
 
     if (cameraPermission === false || cameraPermission === null) {
-      return <Text>No access to camera</Text>
+      return <Modal
+      animationType="fade"
+      transparent={true}
+    >
+      <View style={styles.modalContainer}>
+        <Text style={styles.modalText}>No access to camera</Text>
+        <Image source={require('./assets/icons/settings.png')} style={styles.modalImage} />
+      </View>
+    </Modal>
     }
 
     if (this.state.onboarded !== 'done') {
@@ -189,9 +197,7 @@ export default class App extends React.Component {
 
           { !grabbed && controlsVisible && <View style={styles.smallButtons}>
             <Slider
-              style={{
-                width: 150, height: 40, marginLeft: 10, marginRight: 10
-              }}
+              style={styles.zoomSlider}
               step={0.05}
               value={zoom}
               minimumValue={0.5}

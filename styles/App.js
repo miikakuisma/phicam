@@ -36,6 +36,12 @@ export const styles = StyleSheet.create({
     maxWidth: screenWidth - 40,
     maxHeight: screenHeight - 40,
   },
+  zoomSlider: {
+    width: 150,
+    height: 40,
+    marginLeft: 10,
+    marginRight: 10
+  },
   smallButtons: {
     position: 'absolute',
     left: 40,
