@@ -19,11 +19,11 @@ export default class App extends React.Component {
     cameraPermission: null,
     cameraRollPermission: null,
     type: Camera.Constants.Type.back,
-    lastOverlay: null,
     grabbed: false,
     controlsVisible: false,
     zoom: 1,
-    color: 'white'
+    color: 'white',
+    savedIndex: null
   }
 
   async _cacheResourcesAsync() {
@@ -38,8 +38,8 @@ export default class App extends React.Component {
     const { status } = await Camera.requestPermissionsAsync()
     this.setState({
       onboarded: await AsyncStorage.getItem('onboarded'),
-      lastOverlay: parseInt(await AsyncStorage.getItem('overlay')) || 0,
-      cameraPermission: status === 'granted'
+      cameraPermission: status === 'granted',
+      savedIndex: parseInt(await AsyncStorage.getItem('savedIndex')) || 0
     })
   }
 
@@ -132,10 +132,10 @@ export default class App extends React.Component {
       isReady,
       cameraPermission,
       type,
-      lastOverlay,
       grabbed,
       savedSuccess,
       controlsVisible,
+      savedIndex,
       zoom,
       color
     } = this.state;
@@ -150,7 +150,7 @@ export default class App extends React.Component {
       )
     }
 
-    if (cameraPermission === false || cameraPermission === null) {
+    if (!cameraPermission && isReady) {
       return <Modal
       animationType="fade"
       transparent={true}
@@ -193,7 +193,7 @@ export default class App extends React.Component {
             </View>
           </View> }
 
-          <OverlayBrowser defaultValue={lastOverlay} zoom={zoom} color={color} />
+          <OverlayBrowser savedIndex={savedIndex} zoom={zoom} color={color} />
 
           { !grabbed && controlsVisible && <View style={styles.smallButtons}>
             <Slider

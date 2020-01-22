@@ -6,19 +6,16 @@ import { styles, screenWidth } from '../styles/App'
 import { overlays } from '../overlays'
 
 const propTypes = {
-  lastOverlay: PropTypes.number,
   zoom: PropTypes.number,
+  savedIndex: PropTypes.number,
   color: PropTypes.string
 };
 const defaultProps = {
-  lastOverlay: 0,
-  zoom: 1
+  zoom: 1,
+  color: 'white'
 };
 
 class OverlayBrowser extends React.Component {
-  state = {
-    overlay: 0    
-  }
 
   renderOverlay({item, index}) {
     const { zoom, color } = this.props
@@ -32,17 +29,17 @@ class OverlayBrowser extends React.Component {
     />
   }
 
-  async onOverlayChange (index) {
-    this.setState({ mode: index })
+  async onOverlayChange(index) {
+    this.setState({ overlay: index })
     try {
-      await AsyncStorage.setItem('overlay', index.toString())
+      await AsyncStorage.setItem('savedIndex', index.toString())
     } catch (error) {
       // Error saving data
     }
   }
 
   render() {
-    const { lastOverlay } = this.props
+    const { savedIndex } = this.props
 
     return (
       <View style={styles.overlay}>
@@ -60,7 +57,7 @@ class OverlayBrowser extends React.Component {
           loop={true}
           autoplay={false}
           onSnapToItem={(index) => this.onOverlayChange(index)}
-          firstItem={lastOverlay}
+          firstItem={savedIndex}
         />
       </View>
     );
