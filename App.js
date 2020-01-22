@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, View, ImageBackground, Image, TouchableOpacity, AsyncStorage, Modal } from 'react-native'
+import { View, ImageBackground, Image, TouchableOpacity, AsyncStorage } from 'react-native'
 import { AppLoading } from 'expo'
 import * as Haptics from 'expo-haptics'
 import * as MediaLibrary from 'expo-media-library'
@@ -12,6 +12,7 @@ import Controls from './components/Controls'
 import Actions from './components/Actions'
 import Preview from './components/Preview'
 import PreviewActions from './components/PreviewActions'
+import Modals from './components/Modals'
 import { styles } from './styles/App'
 
 export default class App extends React.Component {
@@ -202,19 +203,7 @@ export default class App extends React.Component {
           <Actions visible={!grabbed} onFlip={this.onFlip.bind(this)} onGrab={this.onGrab.bind(this)} onToggleControls={this.onToggleControls.bind(this)} />
         </View>
         <PreviewActions visible={grabbed} onDiscard={this.onDiscard.bind(this)} onSave={this.onSave.bind(this)} />
-
-        {savedSuccess && 
-          <Modal
-            animationType="fade"
-            transparent={true}
-          >
-            <View style={styles.modalContainer}>
-              <Text style={styles.modalText}>Saved to Your Photos!</Text>
-              <Image source={require('./assets/icons/check.png')} style={styles.modalImage} />
-            </View>
-          </Modal>
-        }
-
+        <Modals visible={savedSuccess} />
       </View>
     )
   }
