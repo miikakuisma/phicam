@@ -1,14 +1,16 @@
 import React from 'react'
-import { Text, View, ImageBackground, Image, TouchableOpacity, AsyncStorage, Slider, Modal, ScrollView, Button } from 'react-native'
+import { Text, View, ImageBackground, Image, TouchableOpacity, AsyncStorage, Slider, Modal, ScrollView } from 'react-native'
 import { AppLoading } from 'expo'
 import { Asset } from 'expo-asset'
 import { Camera } from 'expo-camera'
 import * as Haptics from 'expo-haptics'
 import * as MediaLibrary from 'expo-media-library'
 import Carousel from 'react-native-snap-carousel'
+import OverlayBrowser from './components/OverlayBrowser'
 import { captureRef as takeSnapshotAsync } from 'react-native-view-shot'
 import { styles, screenWidth, screenHeight } from './styles/App'
 import { assetList, overlays } from './overlays'
+import Button from './components/Button'
 
 export default class App extends React.Component {
   state = {
@@ -17,12 +19,11 @@ export default class App extends React.Component {
     cameraPermission: null,
     cameraRollPermission: null,
     type: Camera.Constants.Type.back,
-    overlay: 0,
-    color: 'white',
-    zoom: 1,
-    grabbed: false,
     lastOverlay: null,
+    grabbed: false,
     controlsVisible: false,
+    zoom: 1,
+    color: 'white'
   }
 
   async _cacheResourcesAsync() {
@@ -34,12 +35,12 @@ export default class App extends React.Component {
   }
 
   async componentDidMount() {
-    const { status } = await Camera.requestPermissionsAsync();
+    const { status } = await Camera.requestPermissionsAsync()
     this.setState({
       onboarded: await AsyncStorage.getItem('onboarded'),
-      cameraPermission: status === 'granted',
       lastOverlay: parseInt(await AsyncStorage.getItem('overlay')) || 0,
-    });
+      cameraPermission: status === 'granted'
+    })
   }
 
   async onboardingDone () {
@@ -51,16 +52,8 @@ export default class App extends React.Component {
     }
   }
 
-  async onOverlayChange (index) {
-    this.setState({ mode: index })
-    try {
-      await AsyncStorage.setItem('overlay', index.toString())
-    } catch (error) {
-      // Error saving data
-    }
-  }
-
   onFlip() {
+    Haptics.selectionAsync()
     if (this.state.type === Camera.Constants.Type.back) {
       this.setState({
         type: Camera.Constants.Type.front
@@ -74,6 +67,7 @@ export default class App extends React.Component {
 
   async onGrab() {
     if (this.camera) {
+      Haptics.notificationAsync('success')
       let photo = await this.camera.takePictureAsync();
       this.setState({
         grabbed: {
@@ -87,6 +81,7 @@ export default class App extends React.Component {
 
   onInvert() {
     const { color } = this.state;
+    Haptics.selectionAsync()
     if (color === 'white') {
       this.setState({ color: 'black' })
     } else {
@@ -96,22 +91,11 @@ export default class App extends React.Component {
 
   onZoom(value) {
     Haptics.selectionAsync()
-    this.setState({ zoom: value })
-  }
-
-  renderOverlay({item, index}) {
-    const { color, zoom } = this.state;
-    return <Image
-      style={{
-        ...styles.overlayImage,
-        transform: [{ scale: zoom }]
-      }}
-      source={item.image[color]}
-      resizeMode="contain"
-    />
+    this.setState({ zoom: value })
   }
 
   onToggleControls() {
+    Haptics.selectionAsync()
     this.setState({ controlsVisible: !this.state.controlsVisible })
   }
 
@@ -131,18 +115,30 @@ export default class App extends React.Component {
       })
       try {
         await MediaLibrary.saveToLibraryAsync(screenshot)
+        Haptics.notificationAsync('success')
         this.setState({ savedSuccess: true })
         setTimeout(() => {
           this.setState({ savedSuccess: false })
         }, 1618)
       } catch (error) {
+        // Modal for error?
         // Error saving data
       }
     }
   }
 
   render() {
-    const { isReady, cameraPermission, type, grabbed, lastOverlay, savedSuccess, controlsVisible, zoom } = this.state;
+    const {
+      isReady,
+      cameraPermission,
+      type,
+      lastOverlay,
+      grabbed,
+      savedSuccess,
+      controlsVisible,
+      zoom,
+      color
+    } = this.state;
 
     if (!isReady) {
       return (
@@ -151,15 +147,11 @@ export default class App extends React.Component {
           onFinish={() => this.setState({ isReady: true })}
           onError={console.warn}
         />
-      ); 
+      )
     }
 
-    if (cameraPermission === null) {
-      return <View />;
-    }
-
-    if (cameraPermission === false) {
-      return <Text>No access to camera</Text>;
+    if (cameraPermission === false || cameraPermission === null) {
+      return <Text>No access to camera</Text>
     }
 
     if (this.state.onboarded !== 'done') {
@@ -175,18 +167,10 @@ export default class App extends React.Component {
     }
 
     return (
-      <View style={styles.container}>
-        { grabbed && <View style={styles.modalBottomButton}>
-          <TouchableOpacity onPress={this.onDiscard.bind(this)}>
-            <Image style={styles.buttonHuge} source={require('./assets/icons/delete.png')} resizeMode="contain" />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={this.onSave.bind(this)}>
-            <Image style={styles.buttonHuge} source={require('./assets/icons/download.png')} resizeMode="contain" />
-          </TouchableOpacity>
-        </View> }
+      <View style={styles.container}>        
         <View
-          ref={ref => { this.preview = ref; }}
           style={styles.viewport}
+          ref={ref => { this.preview = ref; }}
         >
           { !grabbed && <Camera
             ref={ref => { this.camera = ref; }}
@@ -194,32 +178,14 @@ export default class App extends React.Component {
             type={type}
           /> }
           { grabbed && <View style={{ flex: 1 }}>
-          <View
-            style={{ flex: 1 }}
-          >
-          <View style={styles.previewContainer}>
-            <Image source={grabbed} resizeMode='cover' style={styles.previewContainer} />
-          </View>
-        </View>
-        </View> }
-          <View style={styles.overlay}>
-            <Carousel
-              ref={c => this._carousel = c}
-              data={overlays}
-              renderItem={this.renderOverlay.bind(this)}
-              windowSize={1}
-              sliderWidth={screenWidth}
-              itemWidth={screenWidth}
-              inactiveSlideScale={0.8}
-              enableSnap={true}
-              useScrollView={false}
-              contentContainerCustomStyle={styles.swiper}
-              loop={true}
-              autoplay={false}
-              onSnapToItem={(index) => this.onOverlayChange(index)}
-              firstItem={lastOverlay}
-            />
-          </View>
+            <View style={{ flex: 1 }}>
+              <View style={styles.previewContainer}>
+                <Image source={grabbed} resizeMode='cover' style={styles.previewContainer} />
+              </View>
+            </View>
+          </View> }
+
+          <OverlayBrowser defaultValue={lastOverlay} zoom={zoom} color={color} />
 
           { !grabbed && controlsVisible && <View style={styles.smallButtons}>
             <Slider
@@ -234,25 +200,20 @@ export default class App extends React.Component {
               maximumTrackTintColor="#555555"
               onValueChange={this.onZoom.bind(this)}
             />
-            <TouchableOpacity onPress={this.onInvert.bind(this)}>
-              <Image style={styles.buttonSmall} source={require('./assets/icons/invert.png')} resizeMode="contain" />
-            </TouchableOpacity>
+            <Button icon={require(`./assets/icons/invert.png`)} size='small' onPress={this.onInvert.bind(this)} />
           </View> }
 
           { !grabbed && <View style={styles.mainButtons}>
-            <TouchableOpacity onPress={this.onFlip.bind(this)}>
-              <Image style={styles.buttonBig} source={require('./assets/icons/flip.png')} resizeMode="contain" />
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={this.onGrab.bind(this)}>
-              <Image style={styles.buttonShoot} source={require('./assets/icons/shoot.png')} resizeMode="contain" />
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={this.onToggleControls.bind(this)}>
-              <Image style={styles.buttonBig} source={require('./assets/icons/controls.png')} resizeMode="contain" />
-            </TouchableOpacity>
+            <Button icon={require(`./assets/icons/flip.png`)} size='big' onPress={this.onFlip.bind(this)} />
+            <Button icon={require('./assets/icons/shoot.png')} size='primary' onPress={this.onGrab.bind(this)} />
+            <Button icon={require(`./assets/icons/controls.png`)} size='big' onPress={this.onToggleControls.bind(this)} />
           </View> }
         </View>
+
+        { grabbed && <View style={styles.modalBottomButton}>
+          <Button icon={require(`./assets/icons/delete.png`)} size='huge' onPress={this.onDiscard.bind(this)} />
+          <Button icon={require(`./assets/icons/download.png`)} size='huge' onPress={this.onSave.bind(this)} />
+        </View> }
 
         {savedSuccess && <Modal
           animationType="fade"
@@ -263,6 +224,7 @@ export default class App extends React.Component {
             <Image source={require('./assets/icons/check.png')} style={styles.modalImage} />
           </View>
         </Modal>}
+
       </View>
     );
   }

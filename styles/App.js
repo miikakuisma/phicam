@@ -44,12 +44,6 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-evenly'
   },
-  buttonSmall: {
-    width: 48,
-    height: 48,
-    backgroundColor: 'white',
-    borderRadius: 16
-  },
   mainButtons: {
     position: 'absolute',
     left: 40,
@@ -57,25 +51,6 @@ export const styles = StyleSheet.create({
     bottom: 70,
     flexDirection: 'row',
     justifyContent: 'space-evenly'
-  },
-  buttonBig: {
-    width: 64,
-    height: 64,
-    backgroundColor: 'white',
-    borderRadius: 16
-  },
-  buttonShoot: {
-    width: 84,
-    height: 84,
-    backgroundColor: 'black',
-    borderRadius: 24,
-    marginTop: -10
-  },
-  buttonHuge: {
-    width: 84,
-    height: 84,
-    backgroundColor: 'white',
-    borderRadius: 24
   },
   previewContainer: {
     position: 'absolute',
