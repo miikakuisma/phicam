@@ -2,7 +2,6 @@ import React from 'react';
 import { StyleSheet, TouchableOpacity, Image } from 'react-native';
 
 export default function Button({ icon, size, onPress }) {
-
   const getStylesBySize = () => {
     switch (size) {
       case 'primary':

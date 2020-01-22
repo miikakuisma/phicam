@@ -5,11 +5,10 @@ import { Asset } from 'expo-asset'
 import { Camera } from 'expo-camera'
 import * as Haptics from 'expo-haptics'
 import * as MediaLibrary from 'expo-media-library'
-import Carousel from 'react-native-snap-carousel'
 import OverlayBrowser from './components/OverlayBrowser'
 import { captureRef as takeSnapshotAsync } from 'react-native-view-shot'
-import { styles, screenWidth, screenHeight } from './styles/App'
-import { assetList, overlays } from './overlays'
+import { styles } from './styles/App'
+import { assetList } from './assets'
 import Button from './components/Button'
 
 export default class App extends React.Component {

@@ -3,13 +3,14 @@ import PropTypes from 'prop-types';
 import { View, Image, AsyncStorage } from 'react-native'
 import Carousel from 'react-native-snap-carousel'
 import { styles, screenWidth } from '../styles/App'
-import { overlays } from '../overlays'
+import { overlays } from '../assets'
 
 const propTypes = {
   zoom: PropTypes.number,
   savedIndex: PropTypes.number,
   color: PropTypes.string
 };
+
 const defaultProps = {
   zoom: 1,
   color: 'white'
@@ -30,7 +31,7 @@ class OverlayBrowser extends React.Component {
   }
 
   async onOverlayChange(index) {
-    this.setState({ overlay: index })
+    // Save index of overlay, to be restored as default for next time
     try {
       await AsyncStorage.setItem('savedIndex', index.toString())
     } catch (error) {
