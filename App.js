@@ -1,15 +1,18 @@
 import React from 'react'
-import { Text, View, ImageBackground, Image, TouchableOpacity, AsyncStorage, Slider, Modal, ScrollView } from 'react-native'
+import { Text, View, ImageBackground, Image, TouchableOpacity, AsyncStorage, Modal } from 'react-native'
 import { AppLoading } from 'expo'
-import { Asset } from 'expo-asset'
-import { Camera } from 'expo-camera'
 import * as Haptics from 'expo-haptics'
 import * as MediaLibrary from 'expo-media-library'
-import OverlayBrowser from './components/OverlayBrowser'
+import { Asset } from 'expo-asset'
+import { Camera } from 'expo-camera'
 import { captureRef as takeSnapshotAsync } from 'react-native-view-shot'
-import { styles } from './styles/App'
 import { assetList } from './assets'
-import Button from './components/Button'
+import OverlayBrowser from './components/OverlayBrowser'
+import Controls from './components/Controls'
+import Actions from './components/Actions'
+import Preview from './components/Preview'
+import PreviewActions from './components/PreviewActions'
+import { styles } from './styles/App'
 
 export default class App extends React.Component {
   state = {
@@ -17,7 +20,6 @@ export default class App extends React.Component {
     onboarded: null,
     cameraPermission: null,
     cameraRollPermission: null,
-    bootDelay: false,
     type: Camera.Constants.Type.back,
     grabbed: false,
     controlsVisible: false,
@@ -36,14 +38,13 @@ export default class App extends React.Component {
 
   async componentDidMount() {
     const { status } = await Camera.requestPermissionsAsync()
+    const onboarded = await AsyncStorage.getItem('onboarded')
+    const savedIndex = parseInt(await AsyncStorage.getItem('savedIndex')) || 0
     this.setState({
-      onboarded: await AsyncStorage.getItem('onboarded'),
+      onboarded,
       cameraPermission: status === 'granted',
-      savedIndex: parseInt(await AsyncStorage.getItem('savedIndex')) || 0
+      savedIndex,
     })
-    setTimeout(() => {
-      this.setState({ bootDelay: true })
-    }, 1000)
   }
 
   async onboardingDone () {
@@ -133,8 +134,8 @@ export default class App extends React.Component {
   render() {
     const {
       isReady,
+      onboarded,
       cameraPermission,
-      bootDelay,
       type,
       grabbed,
       savedSuccess,
@@ -143,6 +144,22 @@ export default class App extends React.Component {
       zoom,
       color
     } = this.state;
+
+    if (cameraPermission === null) {
+      return <View style={{ flex: 1, backgroundColor: '#000000' }}></View>;
+    }
+
+    if (cameraPermission === false) {
+      return <Modal
+        animationType="fade"
+        transparent={true}
+      >
+        <View style={styles.modalContainer}>
+          <Text style={styles.modalText}>No access to camera</Text>
+          <Image source={require('./assets/icons/settings.png')} style={styles.modalImage} />
+        </View>
+      </Modal>
+    }
 
     if (!isReady) {
       return (
@@ -154,18 +171,7 @@ export default class App extends React.Component {
       )
     }
 
-    if (!cameraPermission && isReady && bootDelay) {
-      return <Modal
-      animationType="fade"
-      transparent={true}
-    >
-      <View style={styles.modalContainer}>
-        <Text style={styles.modalText}>No access to camera</Text>
-        <Image source={require('./assets/icons/settings.png')} style={styles.modalImage} />
-      </View>
-    </Modal>}
-
-    if (this.state.onboarded !== 'done' && bootDelay) {
+    if (onboarded !== 'done') {
       return <View style={styles.container}>
         <TouchableOpacity
           activeOpacity={0.9}
@@ -183,56 +189,31 @@ export default class App extends React.Component {
           style={styles.viewport}
           ref={ref => { this.preview = ref; }}
         >
-          { !grabbed && <Camera
-            ref={ref => { this.camera = ref; }}
-            style={{ flex: 1 }}
-            type={type}
-          /> }
-          { grabbed && <View style={{ flex: 1 }}>
-            <View style={{ flex: 1 }}>
-              <View style={styles.previewContainer}>
-                <Image source={grabbed} resizeMode='cover' style={styles.previewContainer} />
-              </View>
-            </View>
-          </View> }
-
-          <OverlayBrowser savedIndex={savedIndex} zoom={zoom} color={color} />
-
-          { !grabbed && controlsVisible && <View style={styles.smallButtons}>
-            <Slider
-              style={styles.zoomSlider}
-              step={0.05}
-              value={zoom}
-              minimumValue={0.5}
-              maximumValue={1.5}
-              minimumTrackTintColor="#FFFFFF"
-              maximumTrackTintColor="#555555"
-              onValueChange={this.onZoom.bind(this)}
+          { !grabbed &&
+            <Camera
+              ref={ref => { this.camera = ref; }}
+              style={{ flex: 1 }}
+              type={type}
             />
-            <Button icon={require(`./assets/icons/invert.png`)} size='small' onPress={this.onInvert.bind(this)} />
-          </View> }
-
-          { !grabbed && <View style={styles.mainButtons}>
-            <Button icon={require(`./assets/icons/flip.png`)} size='big' onPress={this.onFlip.bind(this)} />
-            <Button icon={require('./assets/icons/shoot.png')} size='primary' onPress={this.onGrab.bind(this)} />
-            <Button icon={require(`./assets/icons/controls.png`)} size='big' onPress={this.onToggleControls.bind(this)} />
-          </View> }
+          }
+          <Preview visible={grabbed} grabbed={grabbed} />
+          <OverlayBrowser savedIndex={savedIndex} zoom={zoom} color={color} />
+          <Controls visible={!grabbed && controlsVisible} zoom={zoom} onZoom={this.onZoom.bind(this)} onInvert={this.onInvert.bind(this)} /> 
+          <Actions visible={!grabbed} onFlip={this.onFlip.bind(this)} onGrab={this.onGrab.bind(this)} onToggleControls={this.onToggleControls.bind(this)} />
         </View>
+        <PreviewActions visible={grabbed} onDiscard={this.onDiscard.bind(this)} onSave={this.onSave.bind(this)} />
 
-        { grabbed && <View style={styles.modalBottomButton}>
-          <Button icon={require(`./assets/icons/delete.png`)} size='huge' onPress={this.onDiscard.bind(this)} />
-          <Button icon={require(`./assets/icons/download.png`)} size='huge' onPress={this.onSave.bind(this)} />
-        </View> }
-
-        {savedSuccess && <Modal
-          animationType="fade"
-          transparent={true}
-        >
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalText}>Saved to Your Photos!</Text>
-            <Image source={require('./assets/icons/check.png')} style={styles.modalImage} />
-          </View>
-        </Modal>}
+        {savedSuccess && 
+          <Modal
+            animationType="fade"
+            transparent={true}
+          >
+            <View style={styles.modalContainer}>
+              <Text style={styles.modalText}>Saved to Your Photos!</Text>
+              <Image source={require('./assets/icons/check.png')} style={styles.modalImage} />
+            </View>
+          </Modal>
+        }
 
       </View>
     )

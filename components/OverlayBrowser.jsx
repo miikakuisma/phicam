@@ -17,7 +17,6 @@ const defaultProps = {
 };
 
 class OverlayBrowser extends React.Component {
-
   renderOverlay({item, index}) {
     const { zoom, color } = this.props
     return <Image
