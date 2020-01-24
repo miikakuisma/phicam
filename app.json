@@ -27,6 +27,9 @@
       "supportsTablet": false,
       "bundleIdentifier": "com.moreyes.phicam"
     },
-    "description": ""
+    "android": {
+      "package": "com.moreyes.phicam"
+    },
+    "description": "Explore the world through PHI RATIO (Golden Ratio)"
   }
 }
