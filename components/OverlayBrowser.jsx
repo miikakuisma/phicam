@@ -8,7 +8,9 @@ import { overlays } from '../assets'
 const propTypes = {
   zoom: PropTypes.number,
   savedIndex: PropTypes.number,
-  color: PropTypes.string
+  color: PropTypes.string,
+  opacity: PropTypes.number,
+  angle: PropTypes.number
 };
 
 const defaultProps = {
@@ -18,11 +20,15 @@ const defaultProps = {
 
 class OverlayBrowser extends React.Component {
   renderOverlay({item, index}) {
-    const { zoom, color } = this.props
+    const { zoom, color, opacity, angle } = this.props
     return <Image
       style={{
         ...styles.overlayImage,
-        transform: [{ scale: zoom }]
+        opacity,
+        transform: [
+          { scale: zoom },
+          { rotate: `${angle}deg` }
+        ]
       }}
       source={item.image[color]}
       resizeMode="contain"

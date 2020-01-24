@@ -37,18 +37,33 @@ export const styles = StyleSheet.create({
     maxHeight: screenHeight - 40,
   },
   zoomSlider: {
-    width: 150,
+    width: 100,
     height: 40,
     marginLeft: 10,
     marginRight: 10
   },
-  smallButtons: {
+  opacitySlider: {
+    width: 100,
+    height: 40,
+    marginLeft: 10,
+    marginRight: 10
+  },
+  controlButtons: {
     position: 'absolute',
     left: 40,
     right: 40,
     bottom: 180,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  controlRow: {
     flexDirection: 'row',
-    justifyContent: 'space-evenly'
+    alignItems: 'center'
+  },
+  controlsIcon: {
+    width: 24,
+    height: 24
   },
   mainButtons: {
     position: 'absolute',

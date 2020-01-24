@@ -26,6 +26,8 @@ export default class App extends React.Component {
     controlsVisible: false,
     zoom: 1,
     color: 'white',
+    opacity: 1,
+    angle: 0,
     savedIndex: null
   }
 
@@ -99,6 +101,19 @@ export default class App extends React.Component {
     this.setState({ zoom: value })
   }
 
+  onRotate() {
+    const { angle } = this.state;
+    if (angle === -270) {
+      this.setState({ angle: 0 })
+    } else {
+      this.setState({ angle: this.state.angle - 90 })
+    }
+  }
+
+  onChangeOpacity(value) {
+    this.setState({ opacity: value })
+  }
+
   onToggleControls() {
     Haptics.selectionAsync()
     this.setState({ controlsVisible: !this.state.controlsVisible })
@@ -143,7 +158,9 @@ export default class App extends React.Component {
       controlsVisible,
       savedIndex,
       zoom,
-      color
+      color,
+      opacity,
+      angle
     } = this.state;
 
     if (cameraPermission === null) {
@@ -198,8 +215,17 @@ export default class App extends React.Component {
             />
           }
           <Preview visible={grabbed} grabbed={grabbed} />
-          <OverlayBrowser savedIndex={savedIndex} zoom={zoom} color={color} />
-          <Controls visible={!grabbed && controlsVisible} zoom={zoom} onZoom={this.onZoom.bind(this)} onInvert={this.onInvert.bind(this)} /> 
+          <OverlayBrowser savedIndex={savedIndex} zoom={zoom} color={color} angle={angle} opacity={opacity} />
+          <Controls
+            visible={!grabbed && controlsVisible}
+            zoom={zoom}
+            onZoom={this.onZoom.bind(this)}
+            angle={angle}
+            onRotate={this.onRotate.bind(this)}
+            opacity={opacity}
+            onChangeOpacity={this.onChangeOpacity.bind(this)}
+            onInvert={this.onInvert.bind(this)}
+          /> 
           <Actions visible={!grabbed} onFlip={this.onFlip.bind(this)} onGrab={this.onGrab.bind(this)} onToggleControls={this.onToggleControls.bind(this)} />
         </View>
         <PreviewActions visible={grabbed} onDiscard={this.onDiscard.bind(this)} onSave={this.onSave.bind(this)} />
