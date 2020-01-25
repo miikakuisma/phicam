@@ -1,6 +1,4 @@
 export const assetList = [
-  require('./assets/overlays/fibbonacci-vertical-white.png'),
-  require('./assets/overlays/fibbonacci-vertical-black.png'),
   require('./assets/overlays/spiral-horizontal-white.png'),
   require('./assets/overlays/spiral-horizontal-black.png'),
   require('./assets/overlays/fol-white.png'),
@@ -27,12 +25,6 @@ export const assetList = [
 ]
 
 export const overlays = [
-  {
-    image: {
-      white: require('./assets/overlays/fibbonacci-vertical-white.png'),
-      black: require('./assets/overlays/fibbonacci-vertical-black.png')
-    }
-  },
   {
     image: {
       white: require('./assets/overlays/spiral-horizontal-white.png'),
