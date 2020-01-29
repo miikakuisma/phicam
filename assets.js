@@ -22,6 +22,7 @@ export const assetList = [
   require('./assets/icons/shoot.png'),
   require('./assets/icons/controls.png'),
   require('./assets/icons/check.png'),
+  require('./assets/icons/mirror.png'),
 ]
 
 export const overlays = [

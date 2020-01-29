@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, View, Image, Slider } from 'react-native';
 import Button from '../components/Button'
 
-export default function Controls({ visible, zoom, onZoom, angle, onRotate, opacity, onChangeOpacity, onInvert, orientation }) {
+export default function Controls({ visible, zoom, onZoom, onRotate, opacity, onChangeOpacity, onInvert, onFlip, orientation }) {
   if (!visible) {
     return null
   }
@@ -40,6 +40,7 @@ export default function Controls({ visible, zoom, onZoom, angle, onRotate, opaci
       </View>
       <View style={{ position: 'absolute', right: 0 }}>
         <Button icon={require(`../assets/icons/rotate.png`)} size='small' onPress={onRotate} />
+        <Button icon={require(`../assets/icons/mirror.png`)} size='small' onPress={onFlip} />
       </View>
     </View>
   );

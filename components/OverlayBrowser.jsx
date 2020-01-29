@@ -10,6 +10,7 @@ const propTypes = {
   color: PropTypes.string,
   opacity: PropTypes.number,
   angle: PropTypes.number,
+  scaleX: PropTypes.scaleX,
   screenWidth: PropTypes.number,
   screenHeight: PropTypes.number
 };
@@ -21,7 +22,7 @@ const defaultProps = {
 
 class OverlayBrowser extends React.Component {
   renderOverlay({item, index}) {
-    const { zoom, color, opacity, angle, screenWidth, screenHeight } = this.props
+    const { zoom, color, opacity, angle, scaleX, screenWidth, screenHeight } = this.props
     return <Image
       style={{
         alignSelf: 'center',
@@ -31,6 +32,7 @@ class OverlayBrowser extends React.Component {
         opacity,
         transform: [
           { scale: zoom },
+          { scaleX },
           { rotate: `${angle}deg` }
         ]
       }}

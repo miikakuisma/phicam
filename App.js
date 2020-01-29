@@ -29,6 +29,7 @@ export default class App extends React.Component {
     color: 'white',
     opacity: 1,
     angle: 0,
+    scaleX: 1,
     savedIndex: null,
     screenWidth: null,
     screenHeight: null
@@ -135,6 +136,15 @@ export default class App extends React.Component {
     }
   }
 
+  onFlip() {
+    const { scaleX } = this.state;
+    if (scaleX === -1) {
+      this.setState({ scaleX: 1 })
+    } else {
+      this.setState({ scaleX: -1 })
+    }
+  }
+
   onChangeOpacity(value) {
     this.setState({ opacity: value })
   }
@@ -187,6 +197,7 @@ export default class App extends React.Component {
       color,
       opacity,
       angle,
+      scaleX,
       screenWidth,
       screenHeight
     } = this.state;
@@ -253,20 +264,21 @@ export default class App extends React.Component {
             zoom={zoom}
             color={color}
             angle={angle}
+            scaleX={scaleX}
             opacity={opacity}
             screenWidth={screenWidth}
             screenHeight={screenHeight}
           />
           <Controls
             visible={!grabbed && controlsVisible}
+            orientation={orientation}
             zoom={zoom}
-            onZoom={this.onZoom.bind(this)}
-            angle={angle}
-            onRotate={this.onRotate.bind(this)}
             opacity={opacity}
+            onZoom={this.onZoom.bind(this)}
+            onFlip={this.onFlip.bind(this)}
+            onRotate={this.onRotate.bind(this)}
             onChangeOpacity={this.onChangeOpacity.bind(this)}
             onInvert={this.onInvert.bind(this)}
-            orientation={orientation}
           /> 
           <Actions
             visible={!grabbed}
