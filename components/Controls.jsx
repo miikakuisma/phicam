@@ -1,14 +1,14 @@
 import React from 'react';
-import { View, Image, Slider } from 'react-native';
+import { StyleSheet, View, Image, Slider } from 'react-native';
 import Button from '../components/Button'
-import { styles } from '../styles/App'
 
-export default function Controls({ visible, zoom, onZoom, angle, onRotate, opacity, onChangeOpacity, onInvert }) {
+export default function Controls({ visible, zoom, onZoom, angle, onRotate, opacity, onChangeOpacity, onInvert, orientation }) {
   if (!visible) {
     return null
   }
+  const styleConfig = orientation === 'PORTRAIT' ? styles.buttonsPortrait : styles.buttonsLandscape
   return (
-    <View style={styles.controlButtons}>
+    <View style={styleConfig}>
       <View style={{ position: 'absolute', left: 0 }}>
         <Button icon={require(`../assets/icons/invert.png`)} size='small' onPress={onInvert} />
       </View>
@@ -44,3 +44,44 @@ export default function Controls({ visible, zoom, onZoom, angle, onRotate, opaci
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  buttonsPortrait: {
+    position: 'absolute',
+    left: 40,
+    right: 40,
+    bottom: 180,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  buttonsLandscape: {
+    position: 'absolute',
+    left: 40,
+    width: 250,
+    bottom: 150,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  controlRow: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  controlsIcon: {
+    width: 24,
+    height: 24
+  },
+  zoomSlider: {
+    width: 100,
+    height: 40,
+    marginLeft: 10,
+    marginRight: 10
+  },
+  opacitySlider: {
+    width: 100,
+    height: 40,
+    marginLeft: 10,
+    marginRight: 10
+  }
+})

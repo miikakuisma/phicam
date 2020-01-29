@@ -6,11 +6,9 @@
     "sdkVersion": "36.0.0",
     "platforms": [
       "ios",
-      "android",
-      "web"
+      "android"
     ],
-    "version": "0.9.3",
-    "orientation": "portrait",
+    "version": "0.9.4",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",

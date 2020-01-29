@@ -1,8 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types';
-import { View, Image, AsyncStorage } from 'react-native'
+import { StyleSheet, Dimensions, View, Image, AsyncStorage } from 'react-native'
 import Carousel from 'react-native-snap-carousel'
-import { styles, screenWidth } from '../styles/App'
 import { overlays } from '../assets'
 
 const propTypes = {
@@ -10,7 +9,9 @@ const propTypes = {
   savedIndex: PropTypes.number,
   color: PropTypes.string,
   opacity: PropTypes.number,
-  angle: PropTypes.number
+  angle: PropTypes.number,
+  screenWidth: PropTypes.number,
+  screenHeight: PropTypes.number
 };
 
 const defaultProps = {
@@ -20,10 +21,13 @@ const defaultProps = {
 
 class OverlayBrowser extends React.Component {
   renderOverlay({item, index}) {
-    const { zoom, color, opacity, angle } = this.props
+    const { zoom, color, opacity, angle, screenWidth, screenHeight } = this.props
     return <Image
       style={{
-        ...styles.overlayImage,
+        alignSelf: 'center',
+        justifyContent: 'center',
+        maxWidth: screenWidth,
+        maxHeight: screenHeight,
         opacity,
         transform: [
           { scale: zoom },
@@ -45,7 +49,7 @@ class OverlayBrowser extends React.Component {
   }
 
   render() {
-    const { savedIndex } = this.props
+    const { savedIndex, screenWidth } = this.props
 
     return (
       <View style={styles.overlay}>
@@ -69,6 +73,19 @@ class OverlayBrowser extends React.Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  overlay: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0
+  },
+  swiper: {
+
+  }
+})
 
 OverlayBrowser.propTypes = propTypes;
 OverlayBrowser.defaultProps = defaultProps;

@@ -1,6 +1,6 @@
 import React from 'react'
-import { View, ImageBackground, Image, TouchableOpacity, AsyncStorage } from 'react-native'
-import { AppLoading } from 'expo'
+import { Dimensions, View, ImageBackground, Image, TouchableOpacity, AsyncStorage } from 'react-native'
+import { AppLoading, ScreenOrientation } from 'expo'
 import * as Haptics from 'expo-haptics'
 import * as MediaLibrary from 'expo-media-library'
 import { Asset } from 'expo-asset'
@@ -19,6 +19,7 @@ export default class App extends React.Component {
   state = {
     isReady: false,
     onboarded: null,
+    orientation: null,
     cameraPermission: null,
     cameraRollPermission: null,
     type: Camera.Constants.Type.back,
@@ -28,7 +29,9 @@ export default class App extends React.Component {
     color: 'white',
     opacity: 1,
     angle: 0,
-    savedIndex: null
+    savedIndex: null,
+    screenWidth: null,
+    screenHeight: null
   }
 
   async _cacheResourcesAsync() {
@@ -43,10 +46,32 @@ export default class App extends React.Component {
     const { status } = await Camera.requestPermissionsAsync()
     const onboarded = await AsyncStorage.getItem('onboarded')
     const savedIndex = parseInt(await AsyncStorage.getItem('savedIndex')) || 0
+    const getOrientation = await ScreenOrientation.getOrientationAsync()
+    const screenWidth = Dimensions.get('window').width
+    const screenHeight = Dimensions.get('window').height
     this.setState({
       onboarded,
       cameraPermission: status === 'granted',
       savedIndex,
+      orientation: getOrientation.orientation,
+      screenWidth,
+      screenHeight
+    })
+    ScreenOrientation.addOrientationChangeListener(this.orientationChanged.bind(this))
+  }
+
+  componentWillUnmount() {
+    ScreenOrientation.removeOrientationChangeListeners()
+  }
+
+  orientationChanged(event) {
+    const { orientation } = event.orientationInfo
+    const screenWidth = Dimensions.get('window').width
+    const screenHeight = Dimensions.get('window').height
+    this.setState({
+      orientation,
+      screenWidth,
+      screenHeight
     })
   }
 
@@ -151,6 +176,7 @@ export default class App extends React.Component {
     const {
       isReady,
       onboarded,
+      orientation,
       cameraPermission,
       type,
       grabbed,
@@ -160,7 +186,9 @@ export default class App extends React.Component {
       zoom,
       color,
       opacity,
-      angle
+      angle,
+      screenWidth,
+      screenHeight
     } = this.state;
 
     if (cameraPermission === null) {
@@ -204,7 +232,7 @@ export default class App extends React.Component {
     return (
       <View style={styles.container}>        
         <View
-          style={styles.viewport}
+          style={{ flex: 1 }}
           ref={ref => { this.preview = ref; }}
         >
           { !grabbed &&
@@ -214,8 +242,21 @@ export default class App extends React.Component {
               type={type}
             />
           }
-          <Preview visible={grabbed} grabbed={grabbed} />
-          <OverlayBrowser savedIndex={savedIndex} zoom={zoom} color={color} angle={angle} opacity={opacity} />
+          <Preview
+            visible={grabbed}
+            grabbed={grabbed}
+            screenWidth={screenWidth}
+            screenHeight={screenHeight}
+          />
+          <OverlayBrowser
+            savedIndex={savedIndex}
+            zoom={zoom}
+            color={color}
+            angle={angle}
+            opacity={opacity}
+            screenWidth={screenWidth}
+            screenHeight={screenHeight}
+          />
           <Controls
             visible={!grabbed && controlsVisible}
             zoom={zoom}
@@ -225,10 +266,22 @@ export default class App extends React.Component {
             opacity={opacity}
             onChangeOpacity={this.onChangeOpacity.bind(this)}
             onInvert={this.onInvert.bind(this)}
+            orientation={orientation}
           /> 
-          <Actions visible={!grabbed} onFlip={this.onFlip.bind(this)} onGrab={this.onGrab.bind(this)} onToggleControls={this.onToggleControls.bind(this)} />
+          <Actions
+            visible={!grabbed}
+            onFlip={this.onFlip.bind(this)}
+            onGrab={this.onGrab.bind(this)}
+            onToggleControls={this.onToggleControls.bind(this)}
+            orientation={orientation}
+          />
         </View>
-        <PreviewActions visible={grabbed} onDiscard={this.onDiscard.bind(this)} onSave={this.onSave.bind(this)} />
+        <PreviewActions
+          visible={grabbed}
+          orientation={orientation}
+          onDiscard={this.onDiscard.bind(this)}
+          onSave={this.onSave.bind(this)}
+        />
         <Modals visible={savedSuccess} />
       </View>
     )

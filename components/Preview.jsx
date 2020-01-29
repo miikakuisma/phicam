@@ -1,15 +1,43 @@
 import React from 'react';
-import { View, Image } from 'react-native';
-import { styles } from '../styles/App'
+import { StyleSheet, View, Image } from 'react-native';
 
-export default function Preview({ visible, grabbed }) {
+export default function Preview({ visible, grabbed, screenWidth, screenHeight }) {
   if (!visible) {
     return null
   }
   return (
-    <View style={styles.previewContainer}>
-      <Image source={grabbed} resizeMode='cover' style={styles.previewContainer} />
-      <Image source={require(`../assets/logo.png`)} resizeMode='cover' style={{ zIndex: 9, width: 48, height: 48, marginTop: 70, alignSelf: 'center' }} />
+    <View style={{
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: '#000000',
+      maxWidth: screenWidth,
+      maxHeight: screenHeight
+    }}>
+      <Image source={grabbed} resizeMode='cover' style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: '#000000',
+        maxWidth: screenWidth,
+        maxHeight: screenHeight
+      }} />
+      <Image source={require(`../assets/logo.png`)} resizeMode='cover' style={styles.logo} />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  logo: {
+    width: 48,
+    height: 48,
+    marginTop: 40,
+    marginLeft: 25,
+    opacity: 0.3,
+    zIndex: 9
+  }
+})
