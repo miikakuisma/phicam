@@ -38,7 +38,8 @@ styles = StyleSheet.create({
     width: 48,
     height: 48,
     backgroundColor: 'white',
-    borderRadius: 16
+    borderRadius: 16,
+    margin: 2
   },
   big: {
     width: 64,
