@@ -8,7 +8,7 @@
       "ios",
       "android"
     ],
-    "version": "0.9.4",
+    "version": "0.9.5",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
@@ -22,7 +22,7 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": false,
+      "supportsTablet": true,
       "bundleIdentifier": "com.moreyes.phicam"
     },
     "android": {
