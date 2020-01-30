@@ -43,16 +43,30 @@ export default class App extends React.Component {
     return Promise.all(cacheImages)
   }
 
+  async askPermissions({ type }) {
+    if (type === 'camera') {
+      const { status } = await Camera.requestPermissionsAsync()
+      return status === 'granted'
+    }
+    if (type === 'library') {
+      const { status } = await MediaLibrary.requestPermissionsAsync()
+      return status === 'granted'
+    }
+  }
+
   async componentDidMount() {
-    const { status } = await Camera.requestPermissionsAsync()
+    const cameraPermission = this.askPermissions({ type: 'camera' })
+    const libraryPermission = this.askPermissions({ type: 'library' })
     const onboarded = await AsyncStorage.getItem('onboarded')
     const savedIndex = parseInt(await AsyncStorage.getItem('savedIndex')) || 0
     const getOrientation = await ScreenOrientation.getOrientationAsync()
     const screenWidth = Dimensions.get('window').width
     const screenHeight = Dimensions.get('window').height
+    console.log(cameraPermission, libraryPermission)
     this.setState({
       onboarded,
-      cameraPermission: status === 'granted',
+      cameraPermission,
+      libraryPermission,
       savedIndex,
       orientation: getOrientation.orientation,
       screenWidth,
