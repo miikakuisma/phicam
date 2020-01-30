@@ -62,7 +62,6 @@ export default class App extends React.Component {
     const getOrientation = await ScreenOrientation.getOrientationAsync()
     const screenWidth = Dimensions.get('window').width
     const screenHeight = Dimensions.get('window').height
-    console.log(cameraPermission, libraryPermission)
     this.setState({
       onboarded,
       cameraPermission,
@@ -173,6 +172,9 @@ export default class App extends React.Component {
   }
 
   async onSave() {
+    if (!this.state.cameraRollPermission) {
+      this.askPermissions({ type: 'library' })
+    }
     if (this.preview) {
       let screenshot = await takeSnapshotAsync(this.preview, {
         result: 'tmpfile',
