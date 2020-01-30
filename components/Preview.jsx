@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Image } from 'react-native';
 
-export default function Preview({ visible, grabbed, screenWidth, screenHeight }) {
+export default function Preview({ visible, grabbed, frontCamera, screenWidth, screenHeight }) {
   if (!visible) {
     return null
   }
@@ -24,7 +24,10 @@ export default function Preview({ visible, grabbed, screenWidth, screenHeight })
         bottom: 0,
         backgroundColor: '#000000',
         maxWidth: screenWidth,
-        maxHeight: screenHeight
+        maxHeight: screenHeight,
+        transform: [
+          { scaleX: frontCamera ? -1 : 1 }
+        ]
       }} />
       <Image source={require(`../assets/logo.png`)} resizeMode='cover' style={styles.logo} />
     </View>

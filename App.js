@@ -136,7 +136,7 @@ export default class App extends React.Component {
     }
   }
 
-  onFlip() {
+  onMirror() {
     const { scaleX } = this.state;
     if (scaleX === -1) {
       this.setState({ scaleX: 1 })
@@ -256,6 +256,7 @@ export default class App extends React.Component {
           <Preview
             visible={grabbed}
             grabbed={grabbed}
+            frontCamera={type === Camera.Constants.Type.front}
             screenWidth={screenWidth}
             screenHeight={screenHeight}
           />
@@ -275,7 +276,7 @@ export default class App extends React.Component {
             zoom={zoom}
             opacity={opacity}
             onZoom={this.onZoom.bind(this)}
-            onFlip={this.onFlip.bind(this)}
+            onFlip={this.onMirror.bind(this)}
             onRotate={this.onRotate.bind(this)}
             onChangeOpacity={this.onChangeOpacity.bind(this)}
             onInvert={this.onInvert.bind(this)}

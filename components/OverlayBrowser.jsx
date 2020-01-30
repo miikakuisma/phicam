@@ -10,7 +10,7 @@ const propTypes = {
   color: PropTypes.string,
   opacity: PropTypes.number,
   angle: PropTypes.number,
-  scaleX: PropTypes.scaleX,
+  scaleX: PropTypes.number,
   screenWidth: PropTypes.number,
   screenHeight: PropTypes.number
 };
