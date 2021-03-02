@@ -1,6 +1,8 @@
 import React from 'react'
-import { Dimensions, View, ImageBackground, Image, TouchableOpacity, AsyncStorage } from 'react-native'
-import { AppLoading, ScreenOrientation } from 'expo'
+import { Dimensions, View, ImageBackground, Image, TouchableOpacity } from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import AppLoading from 'expo-app-loading'
+import * as ScreenOrientation from 'expo-screen-orientation'
 import * as Haptics from 'expo-haptics'
 import * as MediaLibrary from 'expo-media-library'
 import { Asset } from 'expo-asset'
@@ -17,7 +19,7 @@ import { styles } from './styles/App'
 
 export default class App extends React.Component {
   state = {
-    isReady: false,
+    // isReady: false,
     onboarded: null,
     orientation: null,
     cameraPermission: null,
@@ -67,7 +69,7 @@ export default class App extends React.Component {
       cameraPermission,
       libraryPermission,
       savedIndex,
-      orientation: getOrientation.orientation,
+      orientation: getOrientation === 1 ? 'PORTRAIT' : 'LANDSCAPE',
       screenWidth,
       screenHeight
     })
@@ -83,7 +85,7 @@ export default class App extends React.Component {
     const screenWidth = Dimensions.get('window').width
     const screenHeight = Dimensions.get('window').height
     this.setState({
-      orientation,
+      orientation: orientation === 1 ? 'PORTRAIT' : 'LANDSCAPE',
       screenWidth,
       screenHeight
     })
@@ -200,7 +202,7 @@ export default class App extends React.Component {
 
   render() {
     const {
-      isReady,
+      // isReady,
       onboarded,
       orientation,
       cameraPermission,
@@ -234,15 +236,15 @@ export default class App extends React.Component {
       </Modal>
     }
 
-    if (!isReady) {
-      return (
-        <AppLoading
-          startAsync={this._cacheResourcesAsync}
-          onFinish={() => this.setState({ isReady: true })}
-          onError={console.warn}
-        />
-      )
-    }
+    // if (!isReady) {
+    //   return (
+    //     <AppLoading
+    //       startAsync={this._cacheResourcesAsync}
+    //       onFinish={() => this.setState({ isReady: true })}
+    //       onError={console.warn}
+    //     />
+    //   )
+    // }
 
     if (onboarded !== 'done') {
       return <View style={styles.container}>

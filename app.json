@@ -3,12 +3,11 @@
     "name": "PhiCam",
     "slug": "phicam",
     "privacy": "unlisted",
-    "sdkVersion": "36.0.0",
     "platforms": [
       "ios",
       "android"
     ],
-    "version": "0.9.5",
+    "version": "1.0.0",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
@@ -23,7 +22,8 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.moreyes.phicam"
+      "bundleIdentifier": "com.moreyes.phicam",
+      "requireFullScreen": true
     },
     "android": {
       "package": "com.moreyes.phicam"
