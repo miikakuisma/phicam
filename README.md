@@ -1,0 +1,6 @@
+![screen 1 - 6 5 inch](https://github.com/miikakuisma/phicam/assets/23075308/adadc314-41c7-4325-85f6-d3e7bddb25eb)
+![screen 2 - 6 5 inch](https://github.com/miikakuisma/phicam/assets/23075308/3f4037a1-8a69-4505-82d4-5b0beb6204ed)
+![screen 3 - 6 5 inch](https://github.com/miikakuisma/phicam/assets/23075308/ebea5cee-ee0d-453c-b5f0-0346dca3a2a9)
+![screen 4 - 6 5 inch](https://github.com/miikakuisma/phicam/assets/23075308/9f8e665f-a859-419b-a441-1f8c75616228)
+![screen 5 - 6 5 inch](https://github.com/miikakuisma/phicam/assets/23075308/c57ea009-80c0-4d41-89d6-e5d51fdcd957)
+![screen 6 - 6 5 inch](https://github.com/miikakuisma/phicam/assets/23075308/da6e973d-f62f-4d83-9813-9270c7fcef5b)
